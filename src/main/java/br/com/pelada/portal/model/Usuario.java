@@ -31,7 +31,7 @@ public class Usuario implements Serializable {
 			@JoinColumn(name = "pelada_id") })
 	private List<Pelada> pelada = new ArrayList<>();
 
-	@OneToMany(mappedBy="usuario")
+	@OneToMany(mappedBy = "usuario")
 	private List<Convite> convites = new ArrayList<>();
 
 	public Usuario() {

@@ -62,12 +62,13 @@ public class UsuarioDao implements Serializable {
 		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
 
 		String jpql = "select u from Usuario u where u.email <> :usuarioLogadoEmail";
-		TypedQuery<Usuario> typedQuery = this.manager.createQuery(jpql, Usuario.class);
+		TypedQuery<Usuario> typedQuery = this.manager.createQuery(jpql, Usuario.class)
+				.setParameter("usuarioLogadoEmail", usuarioLogado.getEmail());
 				
 		List<Usuario> usuarios = typedQuery.getResultList();
 
 		Map<String, String> mapUsuarios = new HashMap<>();
-
+  
 		for (Usuario usuario : usuarios) {
 			mapUsuarios.put(usuario.getNome(), usuario.getId().toString());
 		}
