@@ -1,0 +1,48 @@
+<ui:composition template="../_templatePortal.xhtml"
+    xmlns=" http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:define name="conteudo">
+
+        <h:form style="margin-top:50px;">
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate />
+            </p:messages>
+            <p:dataTable value="#{peladaBean.peladas}" var="pelada"
+                paginator="true" rows="20">
+
+                <f:facet name="header">Lista de Peladas</f:facet>
+
+                <p:column headerText="Nome Evento"
+                    sortBy="#{pelada.nome}" filterBy="#{pelada.nome}"
+                    filterMatchMode="startsWith">
+                    <h:outputText value="#{pelada.nome}" />
+                </p:column>
+
+                <p:column headerText="Data">
+                    <h:outputText value="#{pelada.data.time}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"
+                            locale="pt_BR" timeZone="America/Sao_Paulo" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Hora">
+                    <h:outputText value="#{pelada.hora}" />
+                </p:column>
+
+                <p:column headerText="Local">
+                    <h:outputText value="#{pelada.local}" />
+                </p:column>
+
+                <p:column headerText="Participar">
+                    <h:commandButton value="Participar" action="#{peladaBean.participar(pelada)}" />                      
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,41 @@
+<ui:composition template="../_templatePortal.xhtml"
+    xmlns=" http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:define name="conteudo">
+
+        <h:form>
+            <p:fieldset legend="Enviar Convite">
+                <p:messages id="messages" showDetail="true"
+                    closable="true">
+                    <p:autoUpdate />
+                </p:messages>
+                <h:panelGrid columns="2" cellspacing="10">
+                    <p:outputLabel value="Usuarios" for="usuarios" />
+                    <p:selectOneMenu id="usuarios" required="true" requiredMessage="Usuario Obrigatorio" 
+                        converter="javax.faces.Integer"
+                        value="#{conviteBean.usuario.id}" effect="fold">
+                        <f:selectItem itemLabel="Selecione" itemValue="" />
+                        <f:selectItems value="#{usuarioBean.usuarios}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Peladas" />
+                    <p:selectOneMenu id="peladas" required="true" requiredMessage="Pelada Obrigatorio" 
+                        converter="javax.faces.Integer"
+                        value="#{conviteBean.pelada.id}" effect="fold">
+                        <f:selectItem itemLabel="Selecione" itemValue="" />
+                        <f:selectItems value="#{peladaBean.peladasMap}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel />
+                    <p:commandButton value="Enviar"
+                        action="#{conviteBean.enviarConvite}" />
+                </h:panelGrid>
+            </p:fieldset>
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

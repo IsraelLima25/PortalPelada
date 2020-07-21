@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+    <h:form>
+        <h:panelGrid title="Login" columns="1" cellspacing="10"
+            style="margin-left:580px; border:1px solid green; margin-top: 100px;">
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate />
+            </p:messages>
+            <h2 style="color: green;">Login</h2>
+            <p:outputLabel value="Email" for="emailLogin" />
+            <p:inputText required="true" requiredMessage="Email Obrigatorio" style="width:400px;"
+                value="#{usuarioBean.usuario.email}" id="emailLogin" />
+            <p:outputLabel value="Senha" for="senhaLogin" />
+            <p:password required="true" requiredMessage="Senha Obrigatorio"  style="width:400px;"
+                value="#{usuarioBean.usuario.senha}" id="senhaLogin" />
+            <p:commandButton style="margin-left:115px; width:200px;"
+                action="#{usuarioBean.logar}" value="Entrar" />
+            <p:commandButton type="button"
+                onclick="PF('modal-cadastro').show();"
+                style="margin-left:115px; width:200px;"
+                value="Cadastre-se" />
+        </h:panelGrid>
+
+    </h:form>
+    <p:dialog header="Cadastro Usuario" widgetVar="modal-cadastro"
+        modal="true" height="300">
+        <h:form id="formCadastro">
+            <h:panelGrid columns="1">
+                <p:messages id="messages" showDetail="true"
+                    closable="true">
+                    <p:autoUpdate />
+                </p:messages>
+                <p:outputLabel value="Nome" for="nome" />
+                <p:inputText required="true" requiredMessage="Nome Obrigatorio"  style="width:400px;"
+                    value="#{usuarioBean.usuario.nome}" id="nome" />
+
+                <p:outputLabel value="Apelido" requiredMessage="Apelido Obrigatorio"  for="apelido" />
+                <p:inputText required="true" style="width:400px;"
+                    value="#{usuarioBean.usuario.apelido}" id="apelido" />
+
+                <p:outputLabel value="Email" for="emailCadastro" />
+                <p:inputText required="true" requiredMessage="Email Obrigatorio"  style="width:400px;"
+                    value="#{usuarioBean.usuario.email}"
+                    id="emailCadastro" />
+
+                <p:outputLabel value="Senha" for="senhaCadastro" />
+                <p:password required="true" requiredMessage="Senha Obrigatória"  style="width:400px;"
+                    value="#{usuarioBean.usuario.senha}"
+                    id="senhaCadastro" />
+
+                <p:commandButton
+                    style="margin-left:115px; margin-top:20px; width:200px;"
+                    value="Cadastrar" action="#{usuarioBean.salvar}">
+
+                </p:commandButton>
+            </h:panelGrid>
+        </h:form>
+
+    </p:dialog>
+</h:body>
+</html>

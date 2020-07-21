@@ -1,0 +1,42 @@
+<ui:composition template="../_templatePortal.xhtml"
+    xmlns=" http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:define name="conteudo">
+
+        <h:form>
+            <p:fieldset legend="Cadastrar Evento Esportivo">
+
+                <h:panelGrid columns="2" cellspacing="10">
+
+                    <p:outputLabel value="Nome Evento" for="nome" />
+                    <p:inputText id="nome" required="true" requiredMessage="Nome Obrigatorio" 
+                        value="#{peladaBean.pelada.nome}" />
+
+                    <p:outputLabel value="Data" for="data" />
+                    <p:calendar id="data" required="true" requiredMessage="Data Obrigatorio" 
+                        value="#{peladaBean.pelada.data.time}"
+                        pattern="dd-MM-yyyy" mask="true">
+                    </p:calendar>
+
+                    <p:outputLabel value="Hora" for="hora" />
+                    <p:inputText id="hora" required="true" requiredMessage="Hora Obrigatorio" 
+                        value="#{peladaBean.pelada.hora}" />
+
+                    <p:outputLabel value="Local" for="local" />
+                    <p:inputText id="local" required="true" requiredMessage="Local Obrigatorio" 
+                        value="#{peladaBean.pelada.local}" />
+
+                    <p:outputLabel />
+                    <p:commandButton value="Cadastrar"
+                        action="#{peladaBean.salvar}" />
+                </h:panelGrid>
+            </p:fieldset>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

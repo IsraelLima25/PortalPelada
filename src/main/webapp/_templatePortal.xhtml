@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+</h:head>
+<h:body>
+    <p:layout fullPage="true">
+
+        <p:layoutUnit visible="false" position="north" size="100"
+            resizable="true" closable="false" collapsible="true">
+        </p:layoutUnit>
+
+        <!-- 		<p:layoutUnit position="south" size="100" header="SSDM" resizable="true" closable="false" collapsible="true"> -->
+        <!-- 			<h:outputText value="V 1.0.0" style="text-align: center;" /> -->
+        <!-- 		</p:layoutUnit> -->
+
+        <p:layoutUnit position="west" style="width:15px;" size="300px"
+            header="Menu Principal" resizable="false" closable="false"
+            collapsible="true">
+            <h:form>
+                <p:menu toggleable="true">
+                    <p:submenu label="Portal">
+
+                        <p:menuitem value="Inicio"
+                            action="#{navigationBean.inicio}" />
+                        <p:menuitem value="Incluir Pelada"
+                            action="#{navigationBean.cadastrarPelada}" />
+                        <p:menuitem value="Peladas Disponiveis"
+                            action="#{navigationBean.listarPeladas}" />
+                        <p:menuitem value="Minhas Peladas"
+                            action="#{navigationBean.minhasPeladas}" />
+                        <p:menuitem value="Convidar Amigo"
+                            action="#{navigationBean.enviarConvite}" />
+                        <p:menuitem value="Sair"
+                            action="#{usuarioBean.deslogar}" />
+                    </p:submenu>
+
+                </p:menu>
+            </h:form>
+        </p:layoutUnit>
+
+        <p:layoutUnit visible="false" position="east" size="200"
+            header="Right" resizable="true" closable="true"
+            collapsible="true" effect="drop">
+            <h:outputText value="Right unit content." />
+        </p:layoutUnit>
+
+        <p:layoutUnit position="center">
+            <div id="conteudo">
+                <ui:insert name="conteudo">
+                </ui:insert>
+            </div>
+        </p:layoutUnit>
+
+    </p:layout>
+
+</h:body>
+</html>
