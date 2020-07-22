@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -14,6 +13,7 @@ import javax.persistence.TypedQuery;
 
 import br.com.pelada.portal.model.Pelada;
 import br.com.pelada.portal.model.Usuario;
+import br.com.pelada.portal.security.UsuarioLogBean;
 
 public class PeladaDao implements Serializable {
 
@@ -26,6 +26,9 @@ public class PeladaDao implements Serializable {
 
 	@Inject
 	private UsuarioDao daoUsuario;
+
+	@Inject
+	private UsuarioLogBean userLog;
 
 	@PostConstruct
 	private void init() {
@@ -52,21 +55,11 @@ public class PeladaDao implements Serializable {
 		return dao.listaTodos();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Pelada> peladasDisponiveis() {
 
-		FacesContext context = FacesContext.getCurrentInstance();
-		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
+		Usuario usuarioLogado = userLog.getUserLog();
 		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
-
-		// String jpql = "select distinct p from Pelada p join p.usuarios u join
-		// u.pelada where u.id <> :idUsuarioLogado";
-		// TypedQuery<Pelada> typedQuery = this.manager.createQuery(jpql,
-		// Pelada.class).setParameter("idUsuarioLogado",
-		// usuarioLogado.getId());
-		//
-		// List<Pelada> peladas = typedQuery.getResultList();
-		//
-		// return peladas;
 
 		String sql = "SELECT" + " P.ID, P.NOME, P.DATA, P.HORA, P.LOCAL" + " FROM PELADA P "
 				+ "WHERE ID NOT IN (SELECT P.ID " + "FROM USUARIO U INNER JOIN PELADAS_HAS_USUARIO PU "
@@ -74,9 +67,9 @@ public class PeladaDao implements Serializable {
 				+ "WHERE U.ID = :idUsuarioLogado)";
 
 		Query typedQuery = this.manager.createNativeQuery(sql, Pelada.class);
-		typedQuery.setParameter("idUsuarioLogado", usuarioLogado.getId());		
+		typedQuery.setParameter("idUsuarioLogado", usuarioLogado.getId());
 		List<Pelada> peladasDiponiveisPorUsuario = typedQuery.getResultList();
-		
+
 		return peladasDiponiveisPorUsuario;
 
 	}
@@ -102,8 +95,7 @@ public class PeladaDao implements Serializable {
 
 	public List<Pelada> peladasUsuarioLogado() {
 
-		FacesContext context = FacesContext.getCurrentInstance();
-		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
+		Usuario usuarioLogado = userLog.getUserLog();
 		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
 		String jpql = "select distinct p from Pelada p join fetch p.usuarios u where u.id = :usuarioLogado";
 		TypedQuery<Pelada> typedQuery = this.manager.createQuery(jpql, Pelada.class).setParameter("usuarioLogado",

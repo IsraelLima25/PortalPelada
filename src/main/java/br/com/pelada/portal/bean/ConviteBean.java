@@ -16,6 +16,7 @@ import br.com.pelada.portal.dao.UsuarioDao;
 import br.com.pelada.portal.model.Convite;
 import br.com.pelada.portal.model.Pelada;
 import br.com.pelada.portal.model.Usuario;
+import br.com.pelada.portal.security.UsuarioLogBean;
 import br.com.pelada.portal.tx.Transactional;
 
 @Named
@@ -28,6 +29,10 @@ public class ConviteBean implements Serializable {
 	private Usuario usuario = new Usuario();
 	private Pelada pelada = new Pelada();
 
+	@Inject
+	private FacesContext context;
+
+	@SuppressWarnings("unused")
 	private List<Convite> convites = new ArrayList<>();
 
 	@Inject
@@ -37,7 +42,10 @@ public class ConviteBean implements Serializable {
 	private PeladaDao daoPelada;
 
 	@Inject
-	ConviteDao daoConvite;
+	private ConviteDao daoConvite;
+	
+	@Inject
+	private UsuarioLogBean userLog;
 
 	@Transactional
 	public void enviarConvite() {
@@ -45,25 +53,22 @@ public class ConviteBean implements Serializable {
 		this.convite.setUsuario(daoUsuario.buscaPorId(this.usuario.getId()));
 		this.daoConvite.adiciona(this.convite);
 
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Enviado"));
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Enviado"));
 	}
 
 	@Transactional
 	public void recusarConvite(Convite convite) {
 
 		this.daoConvite.remove(convite);
-		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+		context.getExternalContext().getFlash().setKeepMessages(true);
 
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Recusado"));
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Recusado"));
 	}
 
 	@Transactional
 	public String aceitarConvite(Convite convite) {
 
-		FacesContext context = FacesContext.getCurrentInstance();
-		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
+		Usuario usuarioLogado = userLog.getUserLog();
 		usuarioLogado = this.daoUsuario.buscaPorEmail(usuarioLogado);
 
 		Pelada pelada = convite.getPeladaConvite();
@@ -76,10 +81,9 @@ public class ConviteBean implements Serializable {
 
 		this.daoConvite.remove(convite);
 
-		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+		context.getExternalContext().getFlash().setKeepMessages(true);
 
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Aceito"));
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Aceito"));
 
 		return "/pelada/minhasPeladas?faces-redirect=true";
 

@@ -14,32 +14,30 @@ public class Authorization implements PhaseListener {
 
 	@Override
 	public void afterPhase(PhaseEvent event) {
-		
+
 		FacesContext context = event.getFacesContext();
 		String nomePagina = context.getViewRoot().getViewId();
-		
-		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");		
-		
-		if(usuarioLogado != null && nomePagina.equals("/login/signin.xhtml")){
+
+		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
+
+		if (usuarioLogado != null && nomePagina.equals("/login/signin.xhtml")) {
 			NavigationHandler handler = context.getApplication().getNavigationHandler();
 			handler.handleNavigation(context, null, "/home?faces-redirect=true");
 			context.renderResponse();
 			return;
 		}
-		
-		if("/login/signin.xhtml".equals(nomePagina)) {
+
+		if ("/login/signin.xhtml".equals(nomePagina)) {
 			return;
-		}		
-		
-		if(usuarioLogado != null) {
+		}
+
+		if (usuarioLogado != null) {
 			return;
-		}		
-	
-		
+		}
+
 		NavigationHandler handler = context.getApplication().getNavigationHandler();
 		handler.handleNavigation(context, null, "/login/signin?faces-redirect=true");
 		context.renderResponse();
-		
 
 	}
 

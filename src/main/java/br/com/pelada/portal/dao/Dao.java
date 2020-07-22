@@ -7,8 +7,6 @@ import javax.persistence.criteria.CriteriaQuery;
 
 public class Dao<T> {
 
-	private static final long serialVersionUID = 1L;
-
 	private final Class<T> classe;
 
 	private EntityManager em;

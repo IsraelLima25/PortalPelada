@@ -23,7 +23,11 @@ public class UsuarioBean implements Serializable {
 
 	private Usuario usuario = new Usuario();
 
+	@SuppressWarnings("unused")
 	private List<Usuario> usuarios = new ArrayList<>();
+	
+	@Inject
+	private FacesContext context;
 
 	@Inject
 	private UsuarioDao dao;
@@ -31,14 +35,13 @@ public class UsuarioBean implements Serializable {
 	@Transactional
 	public void salvar() {
 		this.dao.adiciona(usuario);
-		FacesContext.getCurrentInstance().addMessage(null,
+		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Usuario Cadastrado"));
 		this.usuario = new Usuario();
 	}
 
 	public String logar() {
 		boolean existe = this.dao.usuarioExiste(this.usuario);
-		FacesContext context = FacesContext.getCurrentInstance();
 		if (existe) {
 			context.getExternalContext().getSessionMap().put("usuarioLogado", this.usuario);
 			return "/home?faces-redirect=true";
@@ -48,12 +51,6 @@ public class UsuarioBean implements Serializable {
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, null,"Usuário Inválido"));
 
 		return "/login/signin?faces-redirect=true";
-	}
-
-	public String deslogar() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.getExternalContext().getSessionMap().remove("usuarioLogado");
-		return "login/signin?faces-redirect=true";
 	}
 
 	public Usuario getUsuario() {

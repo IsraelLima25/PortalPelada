@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Usuario implements Serializable {
@@ -21,9 +22,14 @@ public class Usuario implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+
+	@NotNull
 	private String nome;
+	@NotNull
 	private String apelido;
+	@NotNull
 	private String email;
+	@NotNull
 	private String senha;
 
 	@ManyToMany

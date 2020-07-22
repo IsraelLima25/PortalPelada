@@ -15,6 +15,7 @@ import br.com.pelada.portal.dao.PeladaDao;
 import br.com.pelada.portal.dao.UsuarioDao;
 import br.com.pelada.portal.model.Pelada;
 import br.com.pelada.portal.model.Usuario;
+import br.com.pelada.portal.security.UsuarioLogBean;
 import br.com.pelada.portal.tx.Transactional;
 
 @Named
@@ -22,10 +23,17 @@ import br.com.pelada.portal.tx.Transactional;
 public class PeladaBean {
 
 	private Pelada pelada = new Pelada();
+
+	@Inject
+	private FacesContext context;
+
+	@SuppressWarnings("unused")
 	private List<Pelada> peladas = new ArrayList<>();
 
+	@SuppressWarnings("unused")
 	private Map<String, String> peladasMap = new HashMap<>();
 
+	@SuppressWarnings("unused")
 	private List<Pelada> peladasUsuarioLogado = new ArrayList<>();
 
 	@Inject
@@ -33,16 +41,17 @@ public class PeladaBean {
 
 	@Inject
 	private UsuarioDao daoUsuario;
-	
+
 	@Inject
 	private PeladaDao daoPelada;
+
+	@Inject
+	private UsuarioLogBean userLog;
 
 	@Transactional
 	public String salvar() {
 
-		FacesContext context = FacesContext.getCurrentInstance();
-		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
-		usuarioLogado = this.daoUsuario.buscaPorEmail(usuarioLogado);
+		Usuario usuarioLogado = userLog.getUserLog();
 
 		this.pelada.getUsuarios().add(usuarioLogado);
 
@@ -50,28 +59,25 @@ public class PeladaBean {
 
 		this.dao.adiciona(this.pelada);
 
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Cadastrado com Sucesso"));
-		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Cadastrado com Sucesso"));
+		context.getExternalContext().getFlash().setKeepMessages(true);
 		return "/pelada/minhasPeladas?faces-redirect=true";
 	}
-	
+
 	@Transactional
 	public String participar(Pelada pelada) {
-		FacesContext context = FacesContext.getCurrentInstance();
-		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
+		Usuario usuarioLogado = userLog.getUserLog();
 		usuarioLogado = this.daoUsuario.buscaPorEmail(usuarioLogado);
-		
+
 		usuarioLogado.getPeladas().add(pelada);
 		pelada.getUsuarios().add(usuarioLogado);
 
 		this.daoUsuario.atualiza(usuarioLogado);
 		this.daoPelada.atualiza(pelada);
 
-		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+		context.getExternalContext().getFlash().setKeepMessages(true);
 
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Aceito"));
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Aceito"));
 
 		return "/pelada/minhasPeladas?faces-redirect=true";
 

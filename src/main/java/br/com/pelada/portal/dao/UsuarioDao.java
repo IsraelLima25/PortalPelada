@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import br.com.pelada.portal.model.Usuario;
+import br.com.pelada.portal.security.UsuarioLogBean;
 
 public class UsuarioDao implements Serializable {
 
@@ -21,6 +21,9 @@ public class UsuarioDao implements Serializable {
 
 	@Inject
 	private EntityManager manager;
+
+	@Inject
+	private UsuarioLogBean userLog;
 
 	@PostConstruct
 	private void init() {
@@ -58,17 +61,17 @@ public class UsuarioDao implements Serializable {
 	}
 
 	public Map<String, String> listaUsuariosDeslogados() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
+
+		Usuario usuarioLogado = userLog.getUserLog();
 
 		String jpql = "select u from Usuario u where u.email <> :usuarioLogadoEmail";
 		TypedQuery<Usuario> typedQuery = this.manager.createQuery(jpql, Usuario.class)
 				.setParameter("usuarioLogadoEmail", usuarioLogado.getEmail());
-				
+
 		List<Usuario> usuarios = typedQuery.getResultList();
 
 		Map<String, String> mapUsuarios = new HashMap<>();
-  
+
 		for (Usuario usuario : usuarios) {
 			mapUsuarios.put(usuario.getNome(), usuario.getId().toString());
 		}

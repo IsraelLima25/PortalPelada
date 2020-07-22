@@ -20,7 +20,7 @@ public class Pelada implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer Id;
-
+	
 	private String nome;
 	private Calendar data = Calendar.getInstance();
 	private String hora;
