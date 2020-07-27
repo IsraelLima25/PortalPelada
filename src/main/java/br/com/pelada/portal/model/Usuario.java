@@ -12,7 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Usuario implements Serializable {
@@ -23,13 +25,19 @@ public class Usuario implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@NotNull
+	@NotEmpty
+	@Size(min = 10, max = 20)
 	private String nome;
-	@NotNull
+
+	@NotEmpty
 	private String apelido;
-	@NotNull
+
+	@NotEmpty
+	@Email
 	private String email;
-	@NotNull
+
+	@NotEmpty
+	@Size(min = 5, max = 10)
 	private String senha;
 
 	@ManyToMany

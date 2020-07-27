@@ -6,4 +6,12 @@
 		<phase-listener>br.com.pelada.portal.util.Authorization</phase-listener>
 	</lifecycle>
 
+	<application>
+		<locale-config>
+			<default-locale>pt_BR</default-locale>
+			<supported-locale>pt_BR</supported-locale>
+		</locale-config>
+	</application>
+
+
 </faces-config>

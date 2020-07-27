@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Convite implements Serializable {
@@ -17,11 +18,13 @@ public class Convite implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
-
+	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "pelada_id")
 	private Pelada peladaConvite;

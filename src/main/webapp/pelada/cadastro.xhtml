@@ -10,29 +10,36 @@
         <h:form>
             <p:fieldset legend="Cadastrar Evento Esportivo">
 
-                <h:panelGrid columns="2" cellspacing="10">
+                <h:panelGrid columns="3" cellspacing="10">
 
                     <p:outputLabel value="Nome Evento" for="nome" />
-                    <p:inputText id="nome" required="true" requiredMessage="Nome Obrigatorio" 
-                        value="#{peladaBean.pelada.nome}" />
+                    <p:inputText id="nome"
+                        value="#{peladaBean.pelada.nome}">
+                        <p:ajax event="blur" process="@this"
+                            update="@this msgNome" />
+                    </p:inputText>
+                    <p:message for="nome" id="msgNome" />
 
-                    <p:outputLabel value="Data" for="data" />
-                    <p:calendar id="data" required="true" requiredMessage="Data Obrigatorio" 
+                    <p:outputLabel value="Data/Hora" for="dataHora" />
+                    <p:calendar id="dataHora" required="true"
+                        requiredMessage="Preenchimento Obrigatório"
                         value="#{peladaBean.pelada.data.time}"
-                        pattern="dd-MM-yyyy" mask="true">
+                        locale="pt_BR" timeZone="America/Sao_Paulo"
+                        pattern="dd.MM.yyyy HH:mm">                        
                     </p:calendar>
-
-                    <p:outputLabel value="Hora" for="hora" />
-                    <p:inputText id="hora" required="true" requiredMessage="Hora Obrigatorio" 
-                        value="#{peladaBean.pelada.hora}" />
+                    <p:message for="dataHora" id="msgDataHora" />
 
                     <p:outputLabel value="Local" for="local" />
-                    <p:inputText id="local" required="true" requiredMessage="Local Obrigatorio" 
-                        value="#{peladaBean.pelada.local}" />
-
-                    <p:outputLabel />
-                    <p:commandButton value="Cadastrar"
-                        action="#{peladaBean.salvar}" />
+                    <p:inputText id="local"
+                        value="#{peladaBean.pelada.local}">
+                        <p:ajax event="blur" process="@this"
+                            update="@this msgLocal" />
+                    </p:inputText>
+                    <p:message for="local" id="msgLocal" />
+                </h:panelGrid>
+                <h:panelGrid columns="1">
+                    <p:commandButton value="Cadastrar" style="margin-left:140px;"
+                        action="#{peladaBean.salvar}" update="@form" />
                 </h:panelGrid>
             </p:fieldset>
         </h:form>

@@ -9,6 +9,8 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 
 		<class>br.com.pelada.portal.model.Usuario</class>
+		<class>br.com.pelada.portal.model.Pelada</class>
+		<class>br.com.pelada.portal.model.Convite</class>
 
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />

@@ -25,7 +25,7 @@ public class UsuarioBean implements Serializable {
 
 	@SuppressWarnings("unused")
 	private List<Usuario> usuarios = new ArrayList<>();
-	
+
 	@Inject
 	private FacesContext context;
 
@@ -33,11 +33,15 @@ public class UsuarioBean implements Serializable {
 	private UsuarioDao dao;
 
 	@Transactional
-	public void salvar() {
+	public String salvar() {
 		this.dao.adiciona(usuario);
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Usuario Cadastrado"));
+		context.getExternalContext().getFlash().setKeepMessages(true);
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario Cadastrado",
+				"Seja Bem Vindo " + usuario.getNome()));
 		this.usuario = new Usuario();
+
+		return "/login/signin?faces-redirect=true";
+
 	}
 
 	public String logar() {
@@ -48,7 +52,7 @@ public class UsuarioBean implements Serializable {
 		}
 
 		context.getExternalContext().getFlash().setKeepMessages(true);
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, null,"Usuário Inválido"));
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Acesso Negado", "Usuário Inválido"));
 
 		return "/login/signin?faces-redirect=true";
 	}
@@ -61,7 +65,7 @@ public class UsuarioBean implements Serializable {
 		this.usuario = usuario;
 	}
 
-	public Map<String,String> getUsuarios() {
+	public Map<String, String> getUsuarios() {
 		return this.dao.listaUsuariosDeslogados();
 	}
 

@@ -9,28 +9,48 @@
 
         <h:form>
             <p:fieldset legend="Enviar Convite">
-                <p:messages id="messages" showDetail="true"
+
+                <p:messages id="messagesGLobal" showDetail="true"
                     closable="true">
-                    <p:autoUpdate />
                 </p:messages>
-                <h:panelGrid columns="2" cellspacing="10">
-                    <p:outputLabel value="Usuarios" for="usuarios" />
-                    <p:selectOneMenu id="usuarios" required="true" requiredMessage="Usuario Obrigatorio" 
-                        converter="javax.faces.Integer"
-                        value="#{conviteBean.usuario.id}" effect="fold">
-                        <f:selectItem itemLabel="Selecione" itemValue="" />
-                        <f:selectItems value="#{usuarioBean.usuarios}" />
-                    </p:selectOneMenu>
-                    <p:outputLabel value="Peladas" />
-                    <p:selectOneMenu id="peladas" required="true" requiredMessage="Pelada Obrigatorio" 
+
+                <h:panelGrid columns="3" cellspacing="10">
+
+                    <p:outputLabel value="Peladas" for="peladas" />
+                    <p:selectOneMenu id="peladas" required="true"
+                        requiredMessage="Preenchimento Obrigtório"
                         converter="javax.faces.Integer"
                         value="#{conviteBean.pelada.id}" effect="fold">
                         <f:selectItem itemLabel="Selecione" itemValue="" />
                         <f:selectItems value="#{peladaBean.peladasMap}" />
+                        <p:ajax event="blur" process="@this"
+                            update="msgPeladas" />
                     </p:selectOneMenu>
+                    <p:message for="peladas" id="msgPeladas"
+                        showSummary="false" showDetail="true">
+                    </p:message>
+
+                    <p:outputLabel value="Usuarios" for="usuarios" />
+                    <p:selectOneMenu id="usuarios" required="true"
+                        requiredMessage="Preenchimento Obrigatório"
+                        converter="javax.faces.Integer"
+                        value="#{conviteBean.usuario.id}" effect="fold">
+                        <f:selectItem itemLabel="Selecione" itemValue="" />
+                        <f:selectItems value="#{usuarioBean.usuarios}" />
+                        <p:ajax event="blur" process="@this"
+                            update="msgUsuarios" />
+                    </p:selectOneMenu>
+                    <p:message for="usuarios" id="msgUsuarios"
+                        showSummary="false" showDetail="true">
+                    </p:message>
+
+                </h:panelGrid>
+
+                <h:panelGrid columns="1">
                     <p:outputLabel />
                     <p:commandButton value="Enviar"
-                        action="#{conviteBean.enviarConvite}" />
+                        action="#{conviteBean.enviarConvite}"
+                        update="messagesGLobal" />
                 </h:panelGrid>
             </p:fieldset>
         </h:form>

@@ -7,62 +7,100 @@
 <h:head>
 </h:head>
 <h:body>
-    <h:form>
-        <h:panelGrid title="Login" columns="1" cellspacing="10"
-            style="margin-left:580px; border:1px solid green; margin-top: 100px;">
-            <p:messages id="messages" showDetail="true" closable="true">
-                <p:autoUpdate />
-            </p:messages>
-            <h2 style="color: green;">Login</h2>
-            <p:outputLabel value="Email" for="emailLogin" />
-            <p:inputText required="true" requiredMessage="Email Obrigatorio" style="width:400px;"
-                value="#{usuarioBean.usuario.email}" id="emailLogin" />
-            <p:outputLabel value="Senha" for="senhaLogin" />
-            <p:password required="true" requiredMessage="Senha Obrigatorio"  style="width:400px;"
-                value="#{usuarioBean.usuario.senha}" id="senhaLogin" />
-            <p:commandButton style="margin-left:115px; width:200px;"
-                action="#{usuarioBean.logar}" value="Entrar" />
-            <p:commandButton type="button"
-                onclick="PF('modal-cadastro').show();"
-                style="margin-left:115px; width:200px;"
-                value="Cadastre-se" />
-        </h:panelGrid>
 
+    <!-- Página Login Sistema -->
+
+    <p:growl id="growlLogin" showDetail="true" showSummary="true" 
+        redisplay="false" sticky="false" />
+    <h:form id="formLogin">
+        <p:fieldset legend="Login">
+            <h:panelGrid columns="3" cellpadding="5"
+                style="margin-left:500px; margin-top:100px;">
+                <p:outputLabel value="Email:" for="emailLogin" />
+                <p:inputText style="width:280px;"
+                    value="#{usuarioBean.usuario.email}" id="emailLogin" />
+                <p:message id="msgLogin" for="emailLogin">
+                </p:message>
+
+                <p:outputLabel value="Senha:" for="senhaLogin" />
+                <p:password style="width:280px;"
+                    value="#{usuarioBean.usuario.senha}" id="senhaLogin" />
+                <p:message for="senhaLogin" id="msgSenha">
+                </p:message>
+
+            </h:panelGrid>
+            <h:panelGrid columns="2"
+                style="margin-left:580px; margin-top:20px; margin-bottom:380px;">
+                <p:commandButton style="width:140px;"
+                    action="#{usuarioBean.logar}" value="Entrar"
+                    update="@form" />
+                <p:commandButton style="width:140px;" type="button"
+                    onclick="PF('modal-cadastro').show();"
+                    value="Cadastre-se" />
+            </h:panelGrid>
+        </p:fieldset>
     </h:form>
-    <p:dialog header="Cadastro Usuario" widgetVar="modal-cadastro"
-        modal="true" height="300">
-        <h:form id="formCadastro">
-            <h:panelGrid columns="1">
-                <p:messages id="messages" showDetail="true"
-                    closable="true">
-                    <p:autoUpdate />
-                </p:messages>
-                <p:outputLabel value="Nome" for="nome" />
-                <p:inputText required="true" requiredMessage="Nome Obrigatorio"  style="width:400px;"
-                    value="#{usuarioBean.usuario.nome}" id="nome" />
 
-                <p:outputLabel value="Apelido" requiredMessage="Apelido Obrigatorio"  for="apelido" />
-                <p:inputText required="true" style="width:400px;"
-                    value="#{usuarioBean.usuario.apelido}" id="apelido" />
+    <!-- Modal Cadastro Usuarios Sistema -->
+
+
+    <h:form id="formDialogCadastro">
+
+        <p:dialog id="dialogCadastro" header="Cadastro Usuario"
+            widgetVar="modal-cadastro" modal="true" height="365"
+            width="800">
+            <!--             <p:growl id="growlCadastro" showDetail="true" -->
+            <!--                 showSummary="true" redisplay="false" sticky="true" /> -->
+
+            <h:panelGrid columns="3" cellpadding="10"
+                style="margin-left:20px;">
+
+                <p:outputLabel value="Nome" for="nome" />
+                <p:inputText value="#{usuarioBean.usuario.nome}"
+                    id="nome" style="width:400px;">
+                    <p:ajax event="blur" process="@this"
+                        update="@this msgNome" />
+                </p:inputText>
+                <p:message for="nome" id="msgNome">
+                </p:message>
+
+                <p:outputLabel value="Apelido" for="apelido" />
+                <p:inputText style="width:400px;"
+                    value="#{usuarioBean.usuario.apelido}" id="apelido">
+                    <p:ajax event="blur" process="@this"
+                        update="@this msgApelido" />
+                </p:inputText>
+                <p:message for="apelido" id="msgApelido">
+                </p:message>
 
                 <p:outputLabel value="Email" for="emailCadastro" />
-                <p:inputText required="true" requiredMessage="Email Obrigatorio"  style="width:400px;"
+                <p:inputText style="width:400px;"
                     value="#{usuarioBean.usuario.email}"
-                    id="emailCadastro" />
+                    id="emailCadastro">
+                    <p:ajax event="blur" process="@this"
+                        update="@this msgEmailCadastro" />
+                </p:inputText>
+                <p:message for="emailCadastro" id="msgEmailCadastro">
+                </p:message>
 
                 <p:outputLabel value="Senha" for="senhaCadastro" />
-                <p:password required="true" requiredMessage="Senha Obrigatória"  style="width:400px;"
+                <p:password style="width:400px;"
                     value="#{usuarioBean.usuario.senha}"
-                    id="senhaCadastro" />
+                    id="senhaCadastro">
+                    <p:ajax event="blur" process="@this"
+                        update="msgSenhaCadastro" />
+                </p:password>
+                <p:message for="senhaCadastro" id="msgSenhaCadastro">
+                </p:message>
 
+            </h:panelGrid>
+            <h:panelGrid columns="2">
                 <p:commandButton
-                    style="margin-left:115px; margin-top:20px; width:200px;"
+                    style="margin-left:130px; margin-top:20px; width:200px;"
                     value="Cadastrar" action="#{usuarioBean.salvar}">
-
                 </p:commandButton>
             </h:panelGrid>
-        </h:form>
-
-    </p:dialog>
+        </p:dialog>
+    </h:form>
 </h:body>
 </html>

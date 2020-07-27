@@ -59,7 +59,8 @@ public class PeladaBean {
 
 		this.dao.adiciona(this.pelada);
 
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Cadastrado com Sucesso"));
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Pelada adicionada com sucesso, a bola vai rolar."));
 		context.getExternalContext().getFlash().setKeepMessages(true);
 		return "/pelada/minhasPeladas?faces-redirect=true";
 	}
@@ -77,7 +78,7 @@ public class PeladaBean {
 
 		context.getExternalContext().getFlash().setKeepMessages(true);
 
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Aceito"));
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Aceito com sucesso, prepare as chuteiras"));
 
 		return "/pelada/minhasPeladas?faces-redirect=true";
 

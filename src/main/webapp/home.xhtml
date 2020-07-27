@@ -29,7 +29,9 @@
                 </p:column>
 
                 <p:column headerText="Hora">
-                    <h:outputText value="#{convite.peladaConvite.hora}" />
+                    <h:outputText value="#{convite.peladaConvite.data.time}">
+                        <f:convertDateTime pattern="HH:mm" locale="pt_BR" timeZone="America/Sao_Paulo" />
+                    </h:outputText>
                 </p:column>
 
                 <p:column headerText="">

@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Pelada implements Serializable {
@@ -20,12 +22,16 @@ public class Pelada implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer Id;
-	
-	private String nome;
-	private Calendar data = Calendar.getInstance();
-	private String hora;
-	private String local;
 
+	@NotEmpty
+	@Size(min = 10, max = 50)
+	private String nome;
+
+	private Calendar data = Calendar.getInstance();
+
+	@NotEmpty
+	private String local;
+	
 	@ManyToMany(mappedBy = "pelada")
 	List<Usuario> usuarios = new ArrayList<>();
 
@@ -40,7 +46,6 @@ public class Pelada implements Serializable {
 		super();
 		this.nome = nome;
 		this.data = data;
-		this.hora = hora;
 		this.local = local;
 	}
 
@@ -66,14 +71,6 @@ public class Pelada implements Serializable {
 
 	public void setData(Calendar data) {
 		this.data = data;
-	}
-
-	public String getHora() {
-		return hora;
-	}
-
-	public void setHora(String hora) {
-		this.hora = hora;
 	}
 
 	public String getLocal() {
