@@ -8,12 +8,15 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import br.com.pelada.portal.model.Pelada;
 import br.com.pelada.portal.model.Usuario;
-import br.com.pelada.portal.security.UsuarioLogBean;
 
 public class PeladaDao implements Serializable {
 
@@ -24,15 +27,17 @@ public class PeladaDao implements Serializable {
 	@Inject
 	private EntityManager manager;
 
-	@Inject
-	private UsuarioDao daoUsuario;
-
-	@Inject
-	private UsuarioLogBean userLog;
-
 	@PostConstruct
 	private void init() {
 		this.dao = new Dao<Pelada>(manager, Pelada.class);
+	}
+
+	public PeladaDao() {
+
+	}
+
+	public PeladaDao(EntityManager entityManager) {
+		this.manager = entityManager;
 	}
 
 	public void adiciona(Pelada pelada) {
@@ -55,31 +60,30 @@ public class PeladaDao implements Serializable {
 		return dao.listaTodos();
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Pelada> peladasDisponiveis() {
+	public List<Pelada> peladasDisponiveis(Usuario usuarioLogado) {
 
-		Usuario usuarioLogado = userLog.getUserLog();
-		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
+		CriteriaBuilder cb = manager.getCriteriaBuilder();
+		CriteriaQuery<Pelada> cq = cb.createQuery(Pelada.class);
 
-		String sql = "SELECT" + " P.ID, P.NOME, P.DATA, P.HORA, P.LOCAL" + " FROM PELADA P "
-				+ "WHERE ID NOT IN (SELECT P.ID " + "FROM USUARIO U INNER JOIN PELADAS_HAS_USUARIO PU "
-				+ "ON U.ID = PU.USUARIO_ID INNER JOIN PELADA P " + "ON P.ID = PU.PELADA_ID "
-				+ "WHERE U.ID = :idUsuarioLogado)";
+		Subquery<Integer> subquery = cq.subquery(Integer.class);
 
-		Query typedQuery = this.manager.createNativeQuery(sql, Pelada.class);
-		typedQuery.setParameter("idUsuarioLogado", usuarioLogado.getId());
+		Root<Pelada> rootPelada = cq.from(Pelada.class);
+		Root<Pelada> rootSubQuery = subquery.from(Pelada.class);
+
+		Join<Pelada, List<Usuario>> join = rootSubQuery.join("usuarios");
+		subquery.where(cb.equal(join.get("id"), usuarioLogado.getId()));
+
+		subquery.select(rootSubQuery.get("id"));
+		cq.select(rootPelada);
+
+		cq.where(cb.not(rootPelada.<Integer>get("id").in(subquery)));
+
+		TypedQuery<Pelada> typedQuery = manager.createQuery(cq);
+
 		List<Pelada> peladasDiponiveisPorUsuario = typedQuery.getResultList();
 
 		return peladasDiponiveisPorUsuario;
 
-	}
-
-	public boolean usuarioExiste(Usuario usuario) {
-		String jpql = "select u from Usuario u where u.email = :email and u.senha = :senha";
-		TypedQuery<Usuario> typedQuery = this.manager.createQuery(jpql, Usuario.class)
-				.setParameter("email", usuario.getEmail()).setParameter("senha", usuario.getSenha());
-		Usuario user = typedQuery.getSingleResult();
-		return user != null;
 	}
 
 	public Map<String, String> peladasMap() {
@@ -93,16 +97,24 @@ public class PeladaDao implements Serializable {
 
 	}
 
-	public List<Pelada> peladasUsuarioLogado() {
+	public List<Pelada> peladasUsuarioLogado(Usuario usuarioLogado) {
 
-		Usuario usuarioLogado = userLog.getUserLog();
-		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
-		String jpql = "select distinct p from Pelada p join fetch p.usuarios u where u.id = :usuarioLogado";
-		TypedQuery<Pelada> typedQuery = this.manager.createQuery(jpql, Pelada.class).setParameter("usuarioLogado",
-				usuarioLogado.getId());
-		List<Pelada> resultList = typedQuery.getResultList();
+		CriteriaBuilder cb = manager.getCriteriaBuilder();
+		CriteriaQuery<Pelada> cq = cb.createQuery(Pelada.class);
 
-		return resultList;
+		Root<Pelada> root = cq.from(Pelada.class);
+		Join<Pelada, List<Usuario>> join = root.join("usuarios");
+		cq.select(root).distinct(true).where(cb.equal(join.<Integer>get("id"), usuarioLogado.getId()));
+
+		TypedQuery<Pelada> typedQuery = this.manager.createQuery(cq);
+		List<Pelada> listaPeladasUsuarioLogado = typedQuery.getResultList();
+
+		return listaPeladasUsuarioLogado;
+
+	}
+
+	public void setDao(Dao<Pelada> dao) {
+		this.dao = dao;
 	}
 
 }

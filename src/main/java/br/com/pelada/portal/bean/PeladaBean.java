@@ -78,7 +78,8 @@ public class PeladaBean {
 
 		context.getExternalContext().getFlash().setKeepMessages(true);
 
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Aceito com sucesso, prepare as chuteiras"));
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Aceito com sucesso, prepare as chuteiras"));
 
 		return "/pelada/minhasPeladas?faces-redirect=true";
 
@@ -93,7 +94,10 @@ public class PeladaBean {
 	}
 
 	public List<Pelada> getPeladas() {
-		return this.dao.peladasDisponiveis();
+		Usuario usuarioLogado = userLog.getUserLog();
+		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
+		return this.dao.peladasDisponiveis(usuarioLogado);
+
 	}
 
 	public void setPeladas(List<Pelada> peladas) {
@@ -109,7 +113,9 @@ public class PeladaBean {
 	}
 
 	public List<Pelada> getPeladasUsuarioLogado() {
-		return this.dao.peladasUsuarioLogado();
+		Usuario usuarioLogado = userLog.getUserLog();
+		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
+		return this.dao.peladasUsuarioLogado(usuarioLogado);
 	}
 
 	public void setPeladasUsuarioLogado(List<Pelada> peladasUsuarioLogado) {

@@ -8,10 +8,16 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import br.com.pelada.portal.model.Usuario;
-import br.com.pelada.portal.security.UsuarioLogBean;
+import br.com.pelada.portal.tx.Transactional;
 
 public class UsuarioDao implements Serializable {
 
@@ -22,16 +28,26 @@ public class UsuarioDao implements Serializable {
 	@Inject
 	private EntityManager manager;
 
-	@Inject
-	private UsuarioLogBean userLog;
+	public UsuarioDao() {
+	}
+
+	public UsuarioDao(EntityManager entityManager) {
+		this.manager = entityManager;
+	}
 
 	@PostConstruct
 	private void init() {
 		this.dao = new Dao<Usuario>(manager, Usuario.class);
 	}
 
-	public void adiciona(Usuario usuario) {
-		this.dao.adiciona(usuario);
+	public boolean adiciona(Usuario usuario) {
+
+		if (emailCadastrado(usuario)) {
+			this.dao.adiciona(usuario);
+			return true;
+		}
+
+		return false;
 	}
 
 	public void atualiza(Usuario usuario) {
@@ -51,45 +67,86 @@ public class UsuarioDao implements Serializable {
 	}
 
 	public Usuario buscaPorEmail(Usuario usuario) {
-		String jpql = "select u from Usuario u where u.email = :email";
-		TypedQuery<Usuario> typedQuery = this.manager.createQuery(jpql, Usuario.class).setParameter("email",
-				usuario.getEmail());
 
-		Usuario usuarioBusca = typedQuery.getSingleResult();
+		CriteriaBuilder cb = this.manager.getCriteriaBuilder();
+		CriteriaQuery<Usuario> cq = cb.createQuery(Usuario.class);
 
-		return usuarioBusca;
+		Root<Usuario> root = cq.from(Usuario.class);
+
+		cq.select(root).where(cb.equal(root.get("email"), usuario.getEmail()));
+
+		TypedQuery<Usuario> typedQuery = manager.createQuery(cq);
+
+		Usuario user = typedQuery.getSingleResult();
+
+		return user;
 	}
 
-	public Map<String, String> listaUsuariosDeslogados() {
-
-		Usuario usuarioLogado = userLog.getUserLog();
-
-		String jpql = "select u from Usuario u where u.email <> :usuarioLogadoEmail";
-		TypedQuery<Usuario> typedQuery = this.manager.createQuery(jpql, Usuario.class)
-				.setParameter("usuarioLogadoEmail", usuarioLogado.getEmail());
-
-		List<Usuario> usuarios = typedQuery.getResultList();
+	public Map<String, String> listaUsuariosDeslogados(Usuario usuarioLogado) {
 
 		Map<String, String> mapUsuarios = new HashMap<>();
+
+		CriteriaBuilder cb = manager.getCriteriaBuilder();
+		CriteriaQuery<Usuario> cq = cb.createQuery(Usuario.class);
+
+		Root<Usuario> root = cq.from(Usuario.class);
+
+		cq.select(root).distinct(true).where(cb.not(cb.equal(root.get("email"), usuarioLogado.getEmail())));
+
+		TypedQuery<Usuario> typedQuery = this.manager.createQuery(cq);
+		List<Usuario> usuarios = typedQuery.getResultList();
 
 		for (Usuario usuario : usuarios) {
 			mapUsuarios.put(usuario.getNome(), usuario.getId().toString());
 		}
 
 		return mapUsuarios;
-
 	}
 
 	public boolean usuarioExiste(Usuario usuario) {
 
-		String jpql = "select u from Usuario u where u.email = :email and u.senha = :senha";
-		TypedQuery<Usuario> typedQuery = this.manager.createQuery(jpql, Usuario.class)
-				.setParameter("email", usuario.getEmail()).setParameter("senha", usuario.getSenha());
+		CriteriaBuilder cb = manager.getCriteriaBuilder();
+		Predicate conjuncao = cb.conjunction();
 
-		List<Usuario> lista = typedQuery.getResultList();
+		CriteriaQuery<Usuario> cq = cb.createQuery(Usuario.class);
 
-		return lista.size() > 0 ? true : false;
+		Root<Usuario> rootUsuario = cq.from(Usuario.class);
 
+		Path<String> email = rootUsuario.<String>get("email");
+		Predicate predicateEmail = cb.equal(email, usuario.getEmail());
+		conjuncao = cb.and(predicateEmail);
+
+		Path<String> senha = rootUsuario.<String>get("senha");
+		Predicate predicateSenha = cb.equal(senha, usuario.getSenha());
+		conjuncao = cb.and(conjuncao, predicateSenha);
+
+		cq.select(rootUsuario).where(conjuncao);
+
+		TypedQuery<Usuario> typedQuery = manager.createQuery(cq);
+		Usuario user = typedQuery.getSingleResult();
+
+		return user != null;
+
+	}
+
+	public boolean emailCadastrado(Usuario usuario) {
+
+		CriteriaBuilder cb = this.manager.getCriteriaBuilder();
+		CriteriaQuery<Usuario> cq = cb.createQuery(Usuario.class);
+
+		Root<Usuario> root = cq.from(Usuario.class);
+		cq.select(root).where(cb.equal(root.get("email"), usuario.getEmail()));
+
+		TypedQuery<Usuario> typedQuery = this.manager.createQuery(cq);
+
+		List<Usuario> usuarios = typedQuery.getResultList();
+
+		return usuarios.isEmpty();
+
+	}
+
+	public void setDao(Dao<Usuario> dao) {
+		this.dao = dao;
 	}
 
 }

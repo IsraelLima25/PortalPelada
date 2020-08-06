@@ -30,7 +30,10 @@
                 </p:column>
 
                 <p:column headerText="Hora">
-                    <h:outputText value="#{pelada.hora}" />
+                    <h:outputText value="#{pelada.data.time}">
+                        <f:convertDateTime pattern="HH:mm"
+                            locale="pt_BR" timeZone="America/Sao_Paulo" />
+                    </h:outputText>
                 </p:column>
 
                 <p:column headerText="Local">
@@ -38,7 +41,8 @@
                 </p:column>
 
                 <p:column headerText="Participar">
-                    <h:commandButton value="Participar" action="#{peladaBean.participar(pelada)}" />                      
+                    <h:commandButton value="Participar"
+                        action="#{peladaBean.participar(pelada)}" />
                 </p:column>
             </p:dataTable>
         </h:form>

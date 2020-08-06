@@ -114,7 +114,10 @@ public class ConviteBean implements Serializable {
 	}
 
 	public List<Convite> getConvites() {
-		return this.daoConvite.convitesUsuarioLogado();
+		Usuario usuarioLogado = userLog.getUserLog();
+		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
+		
+		return this.daoConvite.getConvitesUsuarioLogado(usuarioLogado);
 	}
 
 	public void setConvites(List<Convite> convites) {

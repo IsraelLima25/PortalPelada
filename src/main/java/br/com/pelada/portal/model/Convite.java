@@ -18,12 +18,12 @@ public class Convite implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
-	
+
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "pelada_id")
@@ -80,6 +80,12 @@ public class Convite implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Convite [id=" + id + ", usuarioId=" + usuario.getId() + ", peladaConviteId=" + peladaConvite.getId()
+				+ "]";
 	}
 
 }

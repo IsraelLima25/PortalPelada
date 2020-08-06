@@ -13,6 +13,7 @@ import javax.inject.Named;
 
 import br.com.pelada.portal.dao.UsuarioDao;
 import br.com.pelada.portal.model.Usuario;
+import br.com.pelada.portal.security.UsuarioLogBean;
 import br.com.pelada.portal.tx.Transactional;
 
 @Named
@@ -32,16 +33,29 @@ public class UsuarioBean implements Serializable {
 	@Inject
 	private UsuarioDao dao;
 
+	@Inject
+	private UsuarioLogBean userLog;
+
 	@Transactional
 	public String salvar() {
-		this.dao.adiciona(usuario);
-		context.getExternalContext().getFlash().setKeepMessages(true);
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario Cadastrado",
-				"Seja Bem Vindo " + usuario.getNome()));
-		this.usuario = new Usuario();
 
-		return "/login/signin?faces-redirect=true";
+		if (this.dao.adiciona(usuario)) {
+			context.getExternalContext().getFlash().setKeepMessages(true);
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario Cadastrado",
+					"Seja Bem Vindo " + usuario.getNome()));
+			this.usuario = new Usuario();
 
+			return "/login/signin?faces-redirect=true";
+		} else {
+			
+			context.getExternalContext().getFlash().setKeepMessages(true);
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Usuario já existe",
+					"Usuario " + usuario.getEmail() + " já cadastrado"));
+			
+			this.usuario = new Usuario();
+
+			return "/login/signin?faces-redirect=true";
+		}
 	}
 
 	public String logar() {
@@ -66,7 +80,8 @@ public class UsuarioBean implements Serializable {
 	}
 
 	public Map<String, String> getUsuarios() {
-		return this.dao.listaUsuariosDeslogados();
+		Usuario usuarioLogado = userLog.getUserLog();
+		return this.dao.listaUsuariosDeslogados(usuarioLogado);
 	}
 
 	public void setUsuarios(List<Usuario> usuarios) {

@@ -1,16 +1,21 @@
 package br.com.pelada.portal.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import br.com.pelada.portal.model.Convite;
 import br.com.pelada.portal.model.Usuario;
-import br.com.pelada.portal.security.UsuarioLogBean;
 
 public class ConviteDao implements Serializable {
 
@@ -21,11 +26,13 @@ public class ConviteDao implements Serializable {
 	@Inject
 	private EntityManager manager;
 
-	@Inject
-	private UsuarioDao daoUsuario;
+	public ConviteDao() {
 
-	@Inject
-	private UsuarioLogBean userLog;
+	}
+
+	public ConviteDao(EntityManager entityManager) {
+		this.manager = entityManager;
+	}
 
 	@PostConstruct
 	private void init() {
@@ -52,17 +59,33 @@ public class ConviteDao implements Serializable {
 		return dao.listaTodos();
 	}
 
-	public List<Convite> convitesUsuarioLogado() {
+	public List<Convite> getConvitesUsuarioLogado(Usuario usuarioLogado) {
 
-		Usuario usuarioLogado = userLog.getUserLog();
-		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
-		String jpql = "select c from Convite c where c.usuario.id = :idUsuarioLogado";
-		TypedQuery<Convite> typedQuery = this.manager.createQuery(jpql, Convite.class).setParameter("idUsuarioLogado",
-				usuarioLogado.getId());
+		CriteriaBuilder criteriaBuilder = manager.getCriteriaBuilder();
+		CriteriaQuery<Convite> criteriaQuery = criteriaBuilder.createQuery(Convite.class);
+		Root<Convite> root = criteriaQuery.from(Convite.class);
+
+		criteriaQuery.select(root);
+
+		Path<Integer> usuarioPath = root.join("usuario").get("id");
+
+		List<Predicate> predicates = new ArrayList<>();
+
+		Predicate usuarioIgual = criteriaBuilder.equal(usuarioPath, usuarioLogado.getId());
+		predicates.add(usuarioIgual);
+
+		criteriaQuery.where((Predicate[]) predicates.toArray(new Predicate[0]));
+
+		TypedQuery<Convite> typedQuery = manager.createQuery(criteriaQuery);
+
 		List<Convite> convites = typedQuery.getResultList();
 
 		return convites;
 
+	}
+
+	public void setDao(Dao<Convite> dao) {
+		this.dao = dao;
 	}
 
 }
