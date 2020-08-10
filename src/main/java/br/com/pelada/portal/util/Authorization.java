@@ -27,7 +27,7 @@ public class Authorization implements PhaseListener {
 			return;
 		}
 
-		if ("/login/signin.xhtml".equals(nomePagina)) {
+		if ("/login/signin.xhtml".equals(nomePagina) || "/login/signup.xhtml".equals(nomePagina)) {
 			return;
 		}
 

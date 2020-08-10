@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,7 +16,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import br.com.pelada.portal.model.Usuario;
-import br.com.pelada.portal.tx.Transactional;
 
 public class UsuarioDao implements Serializable {
 
@@ -41,13 +39,8 @@ public class UsuarioDao implements Serializable {
 	}
 
 	public boolean adiciona(Usuario usuario) {
-
-		if (emailCadastrado(usuario)) {
-			this.dao.adiciona(usuario);
-			return true;
-		}
-
-		return false;
+		this.dao.adiciona(usuario);
+		return true;
 	}
 
 	public void atualiza(Usuario usuario) {
@@ -112,36 +105,24 @@ public class UsuarioDao implements Serializable {
 
 		Root<Usuario> rootUsuario = cq.from(Usuario.class);
 
-		Path<String> email = rootUsuario.<String>get("email");
-		Predicate predicateEmail = cb.equal(email, usuario.getEmail());
-		conjuncao = cb.and(predicateEmail);
+		if (usuario.getEmail() != null) {
+			Path<String> email = rootUsuario.<String>get("email");
+			Predicate predicateEmail = cb.equal(email, usuario.getEmail());
+			conjuncao = cb.and(predicateEmail);
+		}
 
-		Path<String> senha = rootUsuario.<String>get("senha");
-		Predicate predicateSenha = cb.equal(senha, usuario.getSenha());
-		conjuncao = cb.and(conjuncao, predicateSenha);
+		if (usuario.getSenha() != null) {
+			Path<String> senha = rootUsuario.<String>get("senha");
+			Predicate predicateSenha = cb.equal(senha, usuario.getSenha());
+			conjuncao = cb.and(conjuncao, predicateSenha);
+		}
 
 		cq.select(rootUsuario).where(conjuncao);
 
 		TypedQuery<Usuario> typedQuery = manager.createQuery(cq);
-		Usuario user = typedQuery.getSingleResult();
+		List<Usuario> users = typedQuery.getResultList();
 
-		return user != null;
-
-	}
-
-	public boolean emailCadastrado(Usuario usuario) {
-
-		CriteriaBuilder cb = this.manager.getCriteriaBuilder();
-		CriteriaQuery<Usuario> cq = cb.createQuery(Usuario.class);
-
-		Root<Usuario> root = cq.from(Usuario.class);
-		cq.select(root).where(cb.equal(root.get("email"), usuario.getEmail()));
-
-		TypedQuery<Usuario> typedQuery = this.manager.createQuery(cq);
-
-		List<Usuario> usuarios = typedQuery.getResultList();
-
-		return usuarios.isEmpty();
+		return users.size() > 0;
 
 	}
 
