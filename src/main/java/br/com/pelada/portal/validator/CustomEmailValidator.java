@@ -26,12 +26,12 @@ public class CustomEmailValidator implements Validator {
 		boolean existe = daoUsuario.usuarioExiste(new Usuario(email));
 
 		if (existe) {
-
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, null, "Email já cadastrado");
 			((UIInput) component).setValid(false);
 			context.addMessage(component.getClientId(), message);
-		} else {
+		} else if (!existe && !email.equals("")) {
 			((UIInput) component).setValid(true);
+
 		}
 
 	}

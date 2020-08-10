@@ -27,13 +27,14 @@ public class SignupBean implements Serializable {
 	private UsuarioDao dao;
 
 	@Transactional
-	public void registrarUsuario() {
+	public String registrarUsuario() {
 
 		this.dao.adiciona(usuario);
 		context.getExternalContext().getFlash().setKeepMessages(true);
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario Cadastrado",
+		context.addMessage("msg", new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario Cadastrado",
 				"Seja Bem Vindo " + usuario.getNome()));
 		this.usuario = new Usuario();
+		return "/login/signup?faces-redirect=true";
 	}
 
 	public Usuario getUsuario() {
