@@ -8,6 +8,14 @@
 </h:head>
 <h:body>
 
+    <p:ajaxStatus onstart="PF('statusDialog').show()"
+        onsuccess="PF('statusDialog').hide()" />
+
+    <p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+        closable="false" resizable="false" showHeader="false">
+        Processando. Por favor aguarde!
+    </p:dialog>
+
     <p:growl id="growlLogin" showDetail="true" showSummary="true"
         redisplay="false" sticky="false" />
 
@@ -27,12 +35,13 @@
                 <p:message for="senhaLogin" id="msgSenha">
                 </p:message>
             </h:panelGrid>
-            
-            <p:commandButton style="width:140px; margin-left:650px; margin-top:10px;"
+
+            <p:commandButton
+                style="width:140px; margin-left:650px; margin-top:10px;"
                 action="#{signinBean.logar}" value="Entrar"
                 update="@form" />
         </h:form>
-        
+
         <h:form>
             <h:panelGrid columns="1"
                 style="margin-left:675px; margin-top:10px; margin-bottom:380px;">
@@ -40,7 +49,7 @@
                     action="#{navigationBean.signup}" />
             </h:panelGrid>
         </h:form>
-        
+
     </p:fieldset>
 </h:body>
 </html>
