@@ -1,61 +1,56 @@
 <ui:composition template="../_templatePortal.xhtml"
-    xmlns=" http://www.w3.org/1999/xhtml"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:p="http://primefaces.org/ui"
-    xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns=" http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
-    <ui:define name="conteudo">
+	<ui:define name="conteudo">
 
-        <h:form>
-            <p:fieldset legend="Enviar Convite">
+		<h:form>
+			<p:fieldset legend="Enviar Convite">
 
-                <p:messages id="messagesGLobal" showDetail="true"
-                    closable="true">
-                </p:messages>
+				<p:messages id="messagesGLobal" showDetail="true" closable="true">
+				</p:messages>
 
-                <h:panelGrid columns="3" cellspacing="10">
+				<h:panelGrid columns="3" cellspacing="10">
 
-                    <p:outputLabel value="Peladas" for="peladas" />
-                    <p:selectOneMenu id="peladas" required="true"
-                        requiredMessage="Preenchimento Obrigtório"
-                        converter="javax.faces.Integer"
-                        value="#{conviteBean.pelada.id}" effect="fold">
-                        <f:selectItem itemLabel="Selecione" itemValue="" />
-                        <f:selectItems value="#{peladaBean.peladasMap}" />
-                        <p:ajax event="blur" process="@this"
-                            update="msgPeladas" />
-                    </p:selectOneMenu>
-                    <p:message for="peladas" id="msgPeladas"
-                        showSummary="false" showDetail="true">
-                    </p:message>
+					<p:outputLabel value="Peladas" for="peladas" />
+					<p:selectOneMenu id="peladas" required="true" style="width:200px;"
+						requiredMessage="Preenchimento Obrigtório"
+						converter="javax.faces.Integer" value="#{conviteBean.pelada.id}"
+						effect="fold">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{peladaBean.peladasMap}" />
+					</p:selectOneMenu>
+					<p:message for="peladas" id="msgPeladas" showSummary="false"
+						showDetail="true">
+					</p:message>
 
-                    <p:outputLabel value="Usuarios" for="usuarios" />
-                    <p:selectOneMenu id="usuarios" required="true"
-                        requiredMessage="Preenchimento Obrigatório"
-                        converter="javax.faces.Integer"
-                        value="#{conviteBean.usuario.id}" effect="fold">
-                        <f:selectItem itemLabel="Selecione" itemValue="" />
-                        <f:selectItems value="#{usuarioBean.usuarios}" />
-                        <p:ajax event="blur" process="@this"
-                            update="msgUsuarios" />
-                    </p:selectOneMenu>
-                    <p:message for="usuarios" id="msgUsuarios"
-                        showSummary="false" showDetail="true">
-                    </p:message>
+					<p:outputLabel value="Usuarios" for="usuarios" />
+					<p:selectOneMenu id="usuarios" required="true" style="width:200px;"
+						requiredMessage="Preenchimento Obrigatório"
+						converter="javax.faces.Integer" value="#{conviteBean.usuario.id}"
+						effect="fold">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{usuarioBean.usuarios}" />
+					</p:selectOneMenu>
+					<p:message for="usuarios" id="msgUsuarios" showSummary="false"
+						showDetail="true">
+					</p:message>
 
-                </h:panelGrid>
+				</h:panelGrid>
 
-                <h:panelGrid columns="1">
-                    <p:outputLabel />
-                    <p:commandButton value="Enviar"
-                        action="#{conviteBean.enviarConvite}"
-                        update="messagesGLobal" />
-                </h:panelGrid>
-            </p:fieldset>
-        </h:form>
+				<h:panelGrid columns="1">
+					<p:outputLabel />
+					<p:commandButton value="Enviar"
+						action="#{conviteBean.enviarConvite}"
+						update="msgPeladas msgUsuarios" />
+				</h:panelGrid>
+			</p:fieldset>
+		</h:form>
 
 
-    </ui:define>
+	</ui:define>
 
 </ui:composition>

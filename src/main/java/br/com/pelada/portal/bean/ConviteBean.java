@@ -48,12 +48,15 @@ public class ConviteBean implements Serializable {
 	private UsuarioLogBean userLog;
 
 	@Transactional
-	public void enviarConvite() {
+	public String enviarConvite() {
 		this.convite.setPeladaConvite(daoPelada.buscaPorId(this.pelada.getId()));
 		this.convite.setUsuario(daoUsuario.buscaPorId(this.usuario.getId()));
 		this.daoConvite.adiciona(this.convite);
-
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Enviado"));
+		
+		context.getExternalContext().getFlash().setKeepMessages(true);		
+		context.addMessage("messagesGLobal", new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Enviado"));
+	
+		return "/convite/enviarConvite?faces-redirect=true";
 	}
 
 	@Transactional
