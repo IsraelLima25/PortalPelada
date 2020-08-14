@@ -14,9 +14,9 @@
             resizable="true" closable="false" collapsible="true">
         </p:layoutUnit>
 
-        <!-- 		<p:layoutUnit position="south" size="100" header="SSDM" resizable="true" closable="false" collapsible="true"> -->
-        <!-- 			<h:outputText value="V 1.0.0" style="text-align: center;" /> -->
-        <!-- 		</p:layoutUnit> -->
+        		<p:layoutUnit position="south" size="100" header="SSDM" resizable="true" closable="false" collapsible="true">
+        			<h:outputText value="#{usuarioBean.getUsuarioLogado().nome}"  />
+        		</p:layoutUnit>
 
         <p:layoutUnit position="west" style="width:15px;" size="300px"
             header="Menu Principal" resizable="false" closable="false"
