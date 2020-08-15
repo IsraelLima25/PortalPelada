@@ -22,15 +22,16 @@ public class UsuarioBean implements Serializable {
 
 	@Inject
 	private UsuarioLogBean userLog;
-	
+
 	private Usuario usuarioLogado;
 
 	@Inject
 	private UsuarioDao dao;
 
 	public Map<String, String> getUsuarios() {
-		this.usuarioLogado = getUsuarioLogado();
-		return this.dao.listaUsuariosDeslogados(getUsuarioLogado());
+		return usuarios;
+//		this.usuarioLogado = getUsuarioLogado();
+//		return this.dao.listaUsuariosDeslogados(getUsuarioLogado());
 	}
 
 	public void setUsuarios(Map<String, String> usuarios) {

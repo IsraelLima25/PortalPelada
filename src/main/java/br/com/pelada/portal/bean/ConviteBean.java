@@ -10,6 +10,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.primefaces.component.selectonemenu.SelectOneMenu;
+
 import br.com.pelada.portal.dao.ConviteDao;
 import br.com.pelada.portal.dao.PeladaDao;
 import br.com.pelada.portal.dao.UsuarioDao;
@@ -29,11 +31,15 @@ public class ConviteBean implements Serializable {
 	private Usuario usuario = new Usuario();
 	private Pelada pelada = new Pelada();
 
+	private SelectOneMenu selectUsuarios;
+
 	@Inject
 	private FacesContext context;
 
 	@SuppressWarnings("unused")
 	private List<Convite> convites = new ArrayList<>();
+
+	private List<Usuario> usuarios = new ArrayList<>();
 
 	@Inject
 	private UsuarioDao daoUsuario;
@@ -43,7 +49,7 @@ public class ConviteBean implements Serializable {
 
 	@Inject
 	private ConviteDao daoConvite;
-	
+
 	@Inject
 	private UsuarioLogBean userLog;
 
@@ -52,20 +58,21 @@ public class ConviteBean implements Serializable {
 		this.convite.setPeladaConvite(daoPelada.buscaPorId(this.pelada.getId()));
 		this.convite.setUsuario(daoUsuario.buscaPorId(this.usuario.getId()));
 		this.daoConvite.adiciona(this.convite);
-		
-		context.getExternalContext().getFlash().setKeepMessages(true);		
+
+		context.getExternalContext().getFlash().setKeepMessages(true);
 		context.addMessage("messagesGLobal", new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Enviado"));
-	
+
 		return "/convite/enviarConvite?faces-redirect=true";
 	}
 
 	@Transactional
-	public void recusarConvite(Convite convite) {
+	public String recusarConvite(Convite convite) {
 
 		this.daoConvite.remove(convite);
 		context.getExternalContext().getFlash().setKeepMessages(true);
-
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Recusado"));
+
+		return "/home/faces-redirect=true";
 	}
 
 	@Transactional
@@ -90,6 +97,16 @@ public class ConviteBean implements Serializable {
 
 		return "/pelada/minhasPeladas?faces-redirect=true";
 
+	}
+
+	public void carregarUsuariosNaoRelacionadosPeladaSelecionada() {
+		if (this.pelada == null) {
+			this.selectUsuarios.setDisabled(true);
+		} else {
+			Pelada pelada = this.daoPelada.buscaPorId(this.pelada.getId());
+			this.usuarios = this.daoUsuario.listaUsuariosNaoRelacionadosPelada(pelada);
+			this.selectUsuarios.setDisabled(false);
+		}
 	}
 
 	public Usuario getUsuario() {
@@ -119,11 +136,27 @@ public class ConviteBean implements Serializable {
 	public List<Convite> getConvites() {
 		Usuario usuarioLogado = userLog.getUserLog();
 		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
-		
+
 		return this.daoConvite.getConvitesUsuarioLogado(usuarioLogado);
 	}
 
 	public void setConvites(List<Convite> convites) {
 		this.convites = convites;
+	}
+
+	public SelectOneMenu getSelectUsuarios() {
+		return selectUsuarios;
+	}
+
+	public void setSelectUsuarios(SelectOneMenu selectUsuarios) {
+		this.selectUsuarios = selectUsuarios;
+	}
+
+	public List<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
 	}
 }

@@ -15,27 +15,32 @@
 
 				<h:panelGrid columns="3" cellspacing="10">
 
-					<p:outputLabel value="Peladas" for="peladas" />
-					<p:selectOneMenu id="peladas" required="true" style="width:200px;"
-						requiredMessage="Preenchimento Obrigtório"
+					<p:outputLabel value="Peladas" for="slcPeladas" />
+					<p:selectOneMenu id="slcPeladas" required="true"
+						requiredMessage="Preenchimento Obrigatório" style="width:200px;"
 						converter="javax.faces.Integer" value="#{conviteBean.pelada.id}"
 						effect="fold">
-						<f:selectItem itemLabel="Selecione" itemValue="" />
-						<f:selectItems value="#{peladaBean.peladasMap}" />
+						<f:selectItem value="#{null}" itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{peladaBean.todasPeladas}" var="pelada"
+							itemValue="#{pelada.id}" itemLabel="#{pelada.nome}" />
+						<p:ajax event="change" update="slcUsuarios"
+							listener="#{conviteBean.carregarUsuariosNaoRelacionadosPeladaSelecionada}" />
 					</p:selectOneMenu>
-					<p:message for="peladas" id="msgPeladas" showSummary="false"
+					<p:message for="slcPeladas" id="msgPeladas" showSummary="false"
 						showDetail="true">
 					</p:message>
 
-					<p:outputLabel value="Usuarios" for="usuarios" />
-					<p:selectOneMenu id="usuarios" required="true" style="width:200px;"
+					<p:outputLabel value="Usuarios" for="slcUsuarios" />
+					<p:selectOneMenu disabled="true" id="slcUsuarios" required="true"
+						style="width:200px;" binding="#{conviteBean.selectUsuarios}"
 						requiredMessage="Preenchimento Obrigatório"
 						converter="javax.faces.Integer" value="#{conviteBean.usuario.id}"
 						effect="fold">
 						<f:selectItem itemLabel="Selecione" itemValue="" />
-						<f:selectItems value="#{usuarioBean.usuarios}" />
+						<f:selectItems value="#{conviteBean.usuarios}" var="usuario"
+							itemValue="#{usuario.id}" itemLabel="#{usuario.nome}" />
 					</p:selectOneMenu>
-					<p:message for="usuarios" id="msgUsuarios" showSummary="false"
+					<p:message for="slcUsuarios" id="msgUsuarios" showSummary="false"
 						showDetail="true">
 					</p:message>
 

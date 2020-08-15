@@ -1,6 +1,7 @@
 package br.com.pelada.portal.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +12,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import br.com.pelada.portal.model.Pelada;
 import br.com.pelada.portal.model.Usuario;
+import br.com.pelada.portal.security.UsuarioLogBean;
 
 public class UsuarioDao implements Serializable {
 
@@ -25,6 +29,9 @@ public class UsuarioDao implements Serializable {
 
 	@Inject
 	private EntityManager manager;
+
+	@Inject
+	private UsuarioLogBean userLog;
 
 	public UsuarioDao() {
 	}
@@ -128,6 +135,29 @@ public class UsuarioDao implements Serializable {
 
 	public void setDao(Dao<Usuario> dao) {
 		this.dao = dao;
+	}
+
+	public List<Usuario> listaUsuariosNaoRelacionadosPelada(Pelada pelada) {
+
+		CriteriaBuilder cb = manager.getCriteriaBuilder();
+		CriteriaQuery<Usuario> cq = cb.createQuery(Usuario.class);
+
+		Root<Usuario> rootUsuario = cq.from(Usuario.class);
+		Join<Usuario, List<Pelada>> join = rootUsuario.join("pelada");
+
+		List<Predicate> predicates = new ArrayList<>();
+
+		Predicate usuarioDiferentePelada = cb.notEqual(join.get("id"), pelada.getId());
+		predicates.add(usuarioDiferentePelada);
+
+		Predicate usuarioDiferenteLogado = cb.notEqual(rootUsuario.get("id"), userLog.getUserLog().getId());
+		predicates.add(usuarioDiferenteLogado);
+
+		cq.select(rootUsuario).where((Predicate[]) predicates.toArray(new Predicate[0]));
+
+		List<Usuario> usuarios = this.manager.createQuery(cq).getResultList();
+
+		return usuarios;
 	}
 
 }

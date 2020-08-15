@@ -1,13 +1,14 @@
 package br.com.pelada.portal.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -19,8 +20,10 @@ import br.com.pelada.portal.security.UsuarioLogBean;
 import br.com.pelada.portal.tx.Transactional;
 
 @Named
-@RequestScoped
-public class PeladaBean {
+@ViewScoped
+public class PeladaBean implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private Pelada pelada = new Pelada();
 
@@ -30,8 +33,7 @@ public class PeladaBean {
 	@SuppressWarnings("unused")
 	private List<Pelada> peladas = new ArrayList<>();
 
-	@SuppressWarnings("unused")
-	private Map<String, String> peladasMap = new HashMap<>();
+	private List<Pelada> todasPeladas = new ArrayList<Pelada>();
 
 	@SuppressWarnings("unused")
 	private List<Pelada> peladasUsuarioLogado = new ArrayList<>();
@@ -47,6 +49,15 @@ public class PeladaBean {
 
 	@Inject
 	private UsuarioLogBean userLog;
+
+	public PeladaBean() {
+
+	}
+
+	@PostConstruct
+	public void carregarPeladas() {
+		this.todasPeladas = this.dao.listaTodos();
+	}
 
 	@Transactional
 	public String salvar() {
@@ -82,7 +93,6 @@ public class PeladaBean {
 				new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Convite Aceito com sucesso, prepare as chuteiras"));
 
 		return "/pelada/minhasPeladas?faces-redirect=true";
-
 	}
 
 	public Pelada getPelada() {
@@ -108,10 +118,6 @@ public class PeladaBean {
 		return this.dao.peladasMap();
 	}
 
-	public void setPeladasMap(Map<String, String> peladasMap) {
-		this.peladasMap = peladasMap;
-	}
-
 	public List<Pelada> getPeladasUsuarioLogado() {
 		Usuario usuarioLogado = userLog.getUserLog();
 		usuarioLogado = daoUsuario.buscaPorEmail(usuarioLogado);
@@ -120,6 +126,14 @@ public class PeladaBean {
 
 	public void setPeladasUsuarioLogado(List<Pelada> peladasUsuarioLogado) {
 		this.peladasUsuarioLogado = peladasUsuarioLogado;
+	}
+
+	public List<Pelada> getTodasPeladas() {
+		return this.todasPeladas;
+	}
+
+	public void setTodasPeladas(List<Pelada> todasPeladas) {
+		this.todasPeladas = todasPeladas;
 	}
 
 }
