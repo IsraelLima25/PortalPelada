@@ -16,6 +16,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import br.com.pelada.portal.model.Pelada;
 import br.com.pelada.portal.model.Usuario;
@@ -139,18 +140,28 @@ public class UsuarioDao implements Serializable {
 
 	public List<Usuario> listaUsuariosNaoRelacionadosPelada(Pelada pelada) {
 
+		/* FALTA CONSIDERAR COMO VINCULADO A PELADA, USUARIOS Q JÁ ESTÃO CONVIDADOS */
+
 		CriteriaBuilder cb = manager.getCriteriaBuilder();
 		CriteriaQuery<Usuario> cq = cb.createQuery(Usuario.class);
 
-		Root<Usuario> rootUsuario = cq.from(Usuario.class);
-		Join<Usuario, List<Pelada>> join = rootUsuario.join("pelada");
-
 		List<Predicate> predicates = new ArrayList<>();
 
-		Predicate usuarioDiferentePelada = cb.notEqual(join.get("id"), pelada.getId());
-		predicates.add(usuarioDiferentePelada);
+		Subquery<Integer> subquery = cq.subquery(Integer.class);
 
-		Predicate usuarioDiferenteLogado = cb.notEqual(rootUsuario.get("id"), userLog.getUserLog().getId());
+		Root<Usuario> rootSubquery = subquery.from(Usuario.class);
+		Join<Usuario, List<Pelada>> join = rootSubquery.join("pelada");
+		subquery.where(cb.equal(join.get("id"), pelada.getId()));
+		subquery.select(rootSubquery.get("id"));
+
+		Root<Usuario> rootUsuario = cq.from(Usuario.class);
+
+		Predicate usuarioNaoPertencentePelada = cb.not(rootUsuario.<Integer>get("id").in(subquery));
+		predicates.add(usuarioNaoPertencentePelada);
+
+		Usuario usuarioLogado = this.userLog.getUserLog();
+
+		Predicate usuarioDiferenteLogado = cb.equal(rootUsuario.<Integer>get("id"), usuarioLogado.getId());
 		predicates.add(usuarioDiferenteLogado);
 
 		cq.select(rootUsuario).where((Predicate[]) predicates.toArray(new Predicate[0]));

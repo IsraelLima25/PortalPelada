@@ -1,53 +1,52 @@
 <ui:composition template="_templatePortal.xhtml"
-    xmlns=" http://www.w3.org/1999/xhtml"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:p="http://primefaces.org/ui"
-    xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns=" http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
-    <ui:define name="conteudo">
+	<ui:define name="conteudo">
 
-        <p:messages id="messages" showDetail="true" closable="true">
-            <p:autoUpdate />
-        </p:messages>
-        <h:form style="margin-top:50px;">
-            <p:dataTable value="#{conviteBean.convites}" var="convite"
-                paginator="true" rows="20">
+		<p:messages id="messages" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
+		<h:form style="margin-top:50px;" id="formConvite">
+			<p:dataTable id="tableConvite" value="#{homeBean.convites}"
+				var="convite" paginator="true" rows="20">
 
-                <f:facet name="header">Convites</f:facet>
+				<f:facet name="header">Convites</f:facet>
 
-                <p:column headerText="Pelada">
-                    <h:outputText value="#{convite.peladaConvite.nome}" />
-                </p:column>
+				<p:column headerText="Pelada">
+					<h:outputText value="#{convite.peladaConvite.nome}" />
+				</p:column>
 
-                <p:column headerText="Data">
-                    <h:outputText
-                        value="#{convite.peladaConvite.data.time}">
-                        <f:convertDateTime pattern="dd/MM/yyyy"
-                            locale="pt_BR" timeZone="America/Sao_Paulo" />
-                    </h:outputText>
-                </p:column>
+				<p:column headerText="Data">
+					<h:outputText value="#{convite.peladaConvite.data.time}">
+						<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+							timeZone="America/Sao_Paulo" />
+					</h:outputText>
+				</p:column>
 
-                <p:column headerText="Hora">
-                    <h:outputText value="#{convite.peladaConvite.data.time}">
-                        <f:convertDateTime pattern="HH:mm" locale="pt_BR" timeZone="America/Sao_Paulo" />
-                    </h:outputText>
-                </p:column>
+				<p:column headerText="Hora">
+					<h:outputText value="#{convite.peladaConvite.data.time}">
+						<f:convertDateTime pattern="HH:mm" locale="pt_BR"
+							timeZone="America/Sao_Paulo" />
+					</h:outputText>
+				</p:column>
 
-                <p:column headerText="">
-                    <p:commandButton value="Aceitar" action="#{conviteBean.aceitarConvite(convite)}" />
-                </p:column>
+				<p:column headerText="">
+					<p:commandButton value="Aceitar"
+						action="#{homeBean.aceitarConvite(convite)}" />
+				</p:column>
 
-                <p:column headerText="">
-                    <p:commandButton value="Recusar"
-                        action="#{conviteBean.recusarConvite(convite)}">
-                        <f:ajax event="click" execute="@this"
-                            render="@form" />
-                    </p:commandButton>
-                </p:column>
+				<p:column headerText="">
+					<p:commandButton value="Recusar" update="@all"
+						action="#{homeBean.recusarConvite(convite)}">
+					</p:commandButton>
+				</p:column>
 
-            </p:dataTable>
-        </h:form>
-    </ui:define>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
 
 </ui:composition>

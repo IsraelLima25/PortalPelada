@@ -64,7 +64,7 @@ public class PeladaDao implements Serializable {
 
 		CriteriaBuilder cb = manager.getCriteriaBuilder();
 		CriteriaQuery<Pelada> cq = cb.createQuery(Pelada.class);
-
+		
 		Subquery<Integer> subquery = cq.subquery(Integer.class);
 
 		Root<Pelada> rootPelada = cq.from(Pelada.class);
